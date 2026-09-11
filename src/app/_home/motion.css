@@ -1,0 +1,256 @@
+/* Design tokens and motion for every page. The page behind the page: html and body follow the theme, so the rubber band at either end never flashes white. */
+html:has(.hp), body:has(.hp) { background: #fafaf9; }
+html:has(.hp[data-theme="dark"]), body:has(.hp[data-theme="dark"]) { background: #14171e; color-scheme: dark; }
+@media (prefers-color-scheme: dark) { html:has(.hp[data-theme="system"]), body:has(.hp[data-theme="system"]) { background: #14171e; color-scheme: dark; } }
+.hp {
+  --scene: #dde5f1;
+  --page: #fafaf9; --panel: #f1efeb; --ink: #1c1917; --muted: #78716c; --line: #e7e5e4;
+  --band: #eff6ff; --band-ink: #1c1917; --band-muted: #57534e; --band-line: #bfdbfe; --band-grid: rgba(37, 99, 235, 0.14);
+  --tint: #dbeafe; --tint-line: #93c5fd; --tint-grid: #93c5fd;
+  --blue: #2563eb; --blue-on-band: #2563eb; --btn-on-band: #1c1917; --btn-on-band-ink: #ffffff;
+  --draw: #2563eb; --draw-dim: #3b82f6; --draw-node: #ffffff; --draw-lit: #2563eb; --draw-label: #1e40af;
+  --draw-l: #2563eb; --draw-l-dim: #60a5fa; --draw-l-node: #ffffff; --draw-l-ring: #3b82f6; --draw-l-label: #1e40af;
+  --gutter: max(1.5rem, calc((100vw - 1200px) / 2)); /* the container's side margin, so absolute pieces line up with the copy */
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-inter), system-ui, sans-serif;
+  background: var(--page); color: var(--ink); font-family: var(--font-body);
+}
+.hp[data-theme="dark"] {
+  --scene: var(--tint);
+  --page: #14171e; --panel: #191d26; --ink: #fafaf9; --muted: #9aa3b2; --line: #262b36;
+  --band: #10131a; --band-ink: #fafaf9; --band-muted: #9aa3b2; --band-line: #262b36; --band-grid: transparent;
+  --tint: #151d2e; --tint-line: #1e3a8a; --tint-grid: #1e3a8a;
+  --blue: #3b82f6; --blue-on-band: #3b82f6; --btn-on-band: #fafaf9; --btn-on-band-ink: #14171e;
+  --draw: #60a5fa; --draw-dim: rgba(96, 165, 250, 0.28); --draw-node: #14171e; --draw-lit: #3b82f6; --draw-label: #93c5fd;
+  --draw-l: #60a5fa; --draw-l-dim: #1e3a8a; --draw-l-node: #151d2e; --draw-l-ring: #3b82f6; --draw-l-label: #93c5fd;
+}
+@media (prefers-color-scheme: dark) {
+  .hp[data-theme="system"] {
+    --scene: var(--tint);
+    --page: #14171e; --panel: #191d26; --ink: #fafaf9; --muted: #9aa3b2; --line: #262b36;
+    --band: #10131a; --band-ink: #fafaf9; --band-muted: #9aa3b2; --band-line: #262b36; --band-grid: transparent;
+    --tint: #151d2e; --tint-line: #1e3a8a; --tint-grid: #1e3a8a;
+    --blue: #3b82f6; --blue-on-band: #3b82f6; --btn-on-band: #fafaf9; --btn-on-band-ink: #14171e;
+    --draw: #60a5fa; --draw-dim: rgba(96, 165, 250, 0.28); --draw-node: #14171e; --draw-lit: #3b82f6; --draw-label: #93c5fd;
+    --draw-l: #60a5fa; --draw-l-dim: #1e3a8a; --draw-l-node: #151d2e; --draw-l-ring: #3b82f6; --draw-l-label: #93c5fd;
+  }
+}
+.hp h1, .hp h2, .hp h3, .hp .num { font-family: var(--font-display); }
+.hp section[id] { scroll-margin-top: 4rem; } /* anchors land below the fixed nav */
+
+/* Scroll reveals. Resting state is visible; the class hides until seen. */
+.hp .reveal { transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.hp.js .reveal { opacity: 0; transform: translateY(22px); }
+.hp .reveal.in { opacity: 1; transform: none; }
+.hp .reveal-d1 { transition-delay: 0.08s; } .hp .reveal-d2 { transition-delay: 0.16s; } .hp .reveal-d3 { transition-delay: 0.24s; }
+
+/* Blueprint drawings draw themselves once their block is in view. */
+@keyframes bp-draw { from { stroke-dashoffset: 700; } to { stroke-dashoffset: 0; } }
+@keyframes bp-pop { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: scale(1); } }
+@keyframes bp-fade { from { opacity: 0; } to { opacity: 1; } }
+.hp .bp-line { stroke-dasharray: 700; stroke-dashoffset: 0; animation: bp-draw 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.hp .bp-node { transform-box: fill-box; transform-origin: center; animation: bp-pop 0.5s ease-out both; }
+.hp .bp-label { animation: bp-fade 0.7s ease-out both; }
+
+/* Three layers: a short pulse travels the hairline from one node to the next, then rests; the nodes glow as it lands. Delays are set inline per step. */
+@keyframes flow-pulse { 0% { stroke-dashoffset: 18; } 40%, 100% { stroke-dashoffset: -100; } }
+.hp .flow-pulse { stroke-dasharray: 18 200; stroke-dashoffset: 18; animation: flow-pulse 4.2s cubic-bezier(0.45, 0, 0.2, 1) infinite; }
+@keyframes node-pulse { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 6% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--blue) 28%, transparent); } 34% { box-shadow: 0 0 0 12px transparent; } }
+.hp .node { animation: node-pulse 4.2s ease-out infinite; }
+
+/* How we start: the active step lights up as it crosses the middle of the viewport. */
+.hp .step { transition: opacity 0.4s ease, transform 0.4s ease; }
+.hp.js .step { opacity: 0.38; }
+.hp .step.active { opacity: 1; }
+.hp .step .step-bar { transform-origin: left; transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); background: var(--blue); height: 2px; }
+.hp.js .step .step-bar { transform: scaleX(0); }
+.hp .step.active .step-bar { transform: scaleX(1); }
+
+/* Story stage. Base styles are the finished scene, for browsers without motion.
+   With it, the track grows tall, the scene pins, and scroll position scrubs every keyframe below. */
+.hp .stage { perspective: 1400px; }
+.hp .art { position: absolute; left: 50%; top: 50%; width: 46%; transform-style: preserve-3d; will-change: transform, opacity; }
+.hp .art-profile, .hp .art-signal { width: 72%; }
+.hp .art-transcript, .hp .art-notion, .hp .art-slack { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+.hp .art-profile { opacity: 0.45; transform: translate(-72%, -104%) scale(0.72) rotate(-3deg); }
+.hp .art-signal { opacity: 1; transform: translate(-50%, -42%); }
+.hp .art mark { color: inherit; }
+.hp .beat + .beat { margin-top: 2rem; }
+
+@keyframes art-transcript { 0%, 24% { opacity: 1; transform: translate(-104%, -118%) rotate(-4deg) rotateY(-12deg); } 38%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6) rotateY(0); } }
+@keyframes art-notion { 0%, 24% { opacity: 1; transform: translate(4%, -112%) rotate(3deg) rotateY(10deg); } 40%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6) rotateY(0); } }
+@keyframes art-slack { 0%, 24% { opacity: 1; transform: translate(-50%, 22%) rotate(-2deg) rotateX(6deg); } 42%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6) rotateX(0); } }
+@keyframes art-profile { 0%, 30% { opacity: 0; transform: translate(-50%, -40%) scale(0.7) rotateX(28deg); } 44%, 60% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotateX(0); } 74%, 100% { opacity: 0.45; transform: translate(-72%, -104%) scale(0.72) rotate(-3deg); } }
+@keyframes art-signal { 0%, 64% { opacity: 0; transform: translate(-50%, -10%) scale(0.92) rotateX(-18deg); } 80%, 100% { opacity: 1; transform: translate(-50%, -42%) scale(1) rotateX(0); } }
+/* Each beat stays readable for most of its phase; the gaps between them are short, so there is always something to read. */
+/* The hero copy moves from the very first pixel of scroll, so the reader sees at once that the text answers. */
+@keyframes sysbeat-0 { 0% { opacity: 1; transform: none; visibility: visible; } 6%, 100% { opacity: 0; transform: translateY(-44px); visibility: hidden; } }
+@keyframes sysbeat-1 { 0%, 7% { opacity: 0; transform: translateY(24px); visibility: hidden; } 11%, 40% { opacity: 1; transform: none; visibility: visible; } 44%, 100% { opacity: 0; transform: translateY(-24px); visibility: hidden; } }
+@keyframes sysbeat-2 { 0%, 46% { opacity: 0; transform: translateY(24px); visibility: hidden; } 50%, 72% { opacity: 1; transform: none; visibility: visible; } 76%, 100% { opacity: 0; transform: translateY(-24px); visibility: hidden; } }
+@keyframes sysbeat-3 { 0%, 78% { opacity: 0; transform: translateY(24px); visibility: hidden; } 82%, 100% { opacity: 1; transform: none; visibility: visible; } }
+
+/* The nav takes the colour of whatever band sits under it. */
+.hp .topbar { background: color-mix(in srgb, var(--page) 72%, transparent); transition: background-color 0.35s, border-color 0.35s; }
+.hp.over-scene .topbar { background: color-mix(in srgb, var(--scene) 72%, transparent); border-color: transparent; }
+
+/* First paint: a still of each scene sits under its canvas until the live scene has drawn, then fades. Stills are made by
+   scripts/posters.mjs; one per theme and per framing the scene distinguishes (the homepage also by aspect ratio). */
+.hp .poster { position: absolute; inset: 0; background: var(--poster) center / cover no-repeat; transition: opacity 0.35s; pointer-events: none; }
+.hp .poster.is-gone { opacity: 0; }
+.hp[data-theme="dark"] .poster { background-image: var(--poster-dark); }
+@media (prefers-color-scheme: dark) { .hp[data-theme="system"] .poster { background-image: var(--poster-dark); } }
+.hp .poster-system { --poster: url("/posters/system-light-a.webp"); --poster-dark: url("/posters/system-dark-a.webp"); }
+@media (min-aspect-ratio: 17/10) { .hp .poster-system { --poster: url("/posters/system-light-b.webp"); --poster-dark: url("/posters/system-dark-b.webp"); } }
+@media (orientation: portrait) { .hp .poster-system { --poster: url("/posters/system-light-m.webp"); --poster-dark: url("/posters/system-dark-m.webp"); } }
+.hp .poster-map { --poster: url("/posters/map-light.webp"); --poster-dark: url("/posters/map-dark.webp"); }
+@media (max-width: 767px) { .hp .poster-map { --poster: url("/posters/map-light-m.webp"); --poster-dark: url("/posters/map-dark-m.webp"); } }
+
+/* Lead page hero: the map runs under the copy, calmer on the side the text sits on. Phones: map above, copy below. */
+.hp .hero-veil { background: linear-gradient(to top, color-mix(in srgb, var(--page) 66%, transparent) 0%, color-mix(in srgb, var(--page) 48%, transparent) 42%, transparent 64%); }
+@media (min-width: 768px) { .hp .hero-veil { background: linear-gradient(to right, color-mix(in srgb, var(--page) 70%, transparent) 0%, color-mix(in srgb, var(--page) 50%, transparent) 36%, transparent 60%); } }
+
+/* The builds tabs and the scroll nudge at the foot of the hero need JS; without it they stay hidden. */
+.hp .phase-nav, .hp .scroll-cue { display: none; }
+/* Page guide: one dot per section on the left edge, sub-dots for the scenes that step through content. Names show only on hover,
+   and only where the gutter has room for them. */
+.hp .guide { display: none; }
+@media (min-width: 1024px) {
+  .hp.js .guide { display: block; position: fixed; left: 1.5rem; top: 50%; z-index: 30; transform: translateY(-50%); font-size: 12px; letter-spacing: 0.01em; }
+  .hp .guide ol { display: flex; flex-direction: column; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+  .hp .guide button { display: flex; align-items: center; gap: 0.6rem; padding: 0.1rem 0; border: 0; background: none; font: inherit; color: var(--muted); cursor: pointer; transition: color 0.3s; }
+  .hp .guide button:hover { color: var(--ink); }
+  .hp .guide i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor; flex: none; transition: background-color 0.3s, border-color 0.3s, transform 0.3s; }
+  .hp .guide span { white-space: nowrap; padding: 0.1rem 0.45rem; border-radius: 0.3rem; background: color-mix(in srgb, var(--page) 88%, transparent); opacity: 0; transition: opacity 0.25s; }
+  .hp .guide:hover span { opacity: 1; } /* names only on hover, for sections and for the steps inside a scene alike, so the guide never repeats the heading beside it */
+  .hp .guide .is-on > button { color: var(--ink); }
+  .hp .guide .is-on > button i { background: var(--blue); border-color: var(--blue); transform: scale(1.15); }
+  .hp .guide .guide-sub { display: none; gap: 0.45rem; margin: 0.45rem 0 0.15rem 0.9rem; }
+  .hp .guide .is-on > .guide-sub { display: flex; }
+  .hp .guide .guide-sub i { width: 5px; height: 5px; border-width: 1px; }
+  .hp .guide .guide-sub .is-on > button i { transform: scale(1.3); }
+  @media (max-width: 1439px) { .hp .guide span { display: none; } }
+}
+.hp .phase-dot { display: flex; align-items: center; gap: 0.65rem; padding: 0.15rem 0; border: 0; background: none; font: inherit; color: var(--muted); cursor: pointer; transition: color 0.3s; }
+.hp .phase-dot:hover { color: var(--ink); }
+.hp .phase-dot i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid currentColor; flex: none; transition: background-color 0.3s, border-color 0.3s, transform 0.3s; }
+[data-phase="0"] .phase-dot-0, [data-phase="1"] .phase-dot-1, [data-phase="2"] .phase-dot-2, [data-phase="3"] .phase-dot-3, [data-phase="4"] .phase-dot-4 { color: var(--ink); }
+[data-phase="0"] .phase-dot-0 i, [data-phase="1"] .phase-dot-1 i, [data-phase="2"] .phase-dot-2 i, [data-phase="3"] .phase-dot-3 i, [data-phase="4"] .phase-dot-4 i { background: var(--blue); border-color: var(--blue); transform: scale(1.15); }
+/* Builds tabs sit in the flow, as a row, on every width. */
+.hp.js .phase-nav.phase-nav-row { display: flex; position: static; transform: none; flex-direction: row; flex-wrap: wrap; gap: 0.5rem; margin: 1.75rem 0 0; padding: 0; list-style: none; font-size: 13px; }
+.hp.js .phase-nav-row .phase-dot { gap: 0; padding: 0.4rem 0.85rem; border: 1px solid var(--line); border-radius: 999px; }
+.hp.js .phase-nav-row .phase-dot i { display: none; }
+#builds[data-phase="0"] .phase-nav-row .phase-dot-0, #builds[data-phase="1"] .phase-nav-row .phase-dot-1, #builds[data-phase="2"] .phase-nav-row .phase-dot-2, #builds[data-phase="3"] .phase-nav-row .phase-dot-3, #builds[data-phase="4"] .phase-nav-row .phase-dot-4 { background: var(--blue); border-color: var(--blue); color: #ffffff; }
+/* Builds carousel: native horizontal scroll with snap, the centred card lit and its neighbours dimmed. Tabs and arrows scroll it. */
+.hp .builds-wrap { --cw: min(880px, calc(100vw - 3rem)); --gap: 1.5rem; }
+.hp .builds-arrow { display: none; position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; }
+@media (min-width: 768px) { .hp .builds-arrow { display: grid; } .hp .builds-arrow-prev { left: calc(50% - var(--cw) / 2 - 3.75rem); } .hp .builds-arrow-next { right: calc(50% - var(--cw) / 2 - 3.75rem); } }
+.hp .builds-track { position: relative; display: flex; gap: var(--gap); overflow-x: auto; scroll-snap-type: x mandatory; padding: 0.25rem calc(50vw - var(--cw) / 2) 0.5rem; scrollbar-width: none; }
+.hp .builds-track::-webkit-scrollbar { display: none; }
+.hp .build-card { flex: 0 0 var(--cw); scroll-snap-align: center; opacity: 0.4; transform: scale(0.96); transition: opacity 0.4s, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+#builds[data-phase="0"] .build-card:nth-child(1), #builds[data-phase="1"] .build-card:nth-child(2), #builds[data-phase="2"] .build-card:nth-child(3), #builds[data-phase="3"] .build-card:nth-child(4), #builds[data-phase="4"] .build-card:nth-child(5) { opacity: 1; transform: none; }
+@media (min-width: 768px) { .hp.js:not([data-motion="off"]) .scroll-cue { display: flex; } }
+.hp .scroll-cue { position: absolute; left: 50%; bottom: 2rem; z-index: 11; flex-direction: column; align-items: center; gap: 0.6rem; transform: translateX(-50%); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); transition: opacity 0.4s; }
+.hp .scroll-cue i { display: block; width: 2px; height: 3rem; border-radius: 1px; background: linear-gradient(var(--blue), transparent); transform-origin: top; animation: cue 1.8s ease-in-out infinite; }
+#system[data-started="1"] .scroll-cue { opacity: 0; }
+@keyframes cue { 0% { transform: scaleY(0); opacity: 0; } 35% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1) translateY(0.9rem); opacity: 0; } }
+@keyframes beat-0 { 0%, 22% { opacity: 1; transform: none; visibility: visible; } 30%, 100% { opacity: 0; transform: translateY(-24px); visibility: hidden; } }
+@keyframes beat-1 { 0%, 32% { opacity: 0; transform: translateY(24px); visibility: hidden; } 42%, 60% { opacity: 1; transform: none; visibility: visible; } 68%, 100% { opacity: 0; transform: translateY(-24px); visibility: hidden; } }
+@keyframes beat-2 { 0%, 68% { opacity: 0; transform: translateY(24px); visibility: hidden; } 78%, 100% { opacity: 1; transform: none; visibility: visible; } }
+
+/* The system scene: the object itself is Three.js (system-scene.tsx). CSS keeps the beats beside it. */
+@media (prefers-reduced-motion: no-preference) {
+  .hp:not([data-motion="off"]) .scrub-track { height: 360vh; }
+  .hp:not([data-motion="off"]) #system.scrub-track { height: 640vh; }
+  .hp:not([data-motion="off"]) #system .beats { min-height: 30rem; }
+  .hp:not([data-motion="off"]) #system .beat { inset: 0; display: flex; flex-direction: column; justify-content: center; }
+  .hp:not([data-motion="off"]) #system .beat-3 { animation-name: sysbeat-3; }
+  .hp:not([data-motion="off"]) #system .beat-0 { animation-name: sysbeat-0; }
+  .hp:not([data-motion="off"]) #system .beat-1 { animation-name: sysbeat-1; }
+  .hp:not([data-motion="off"]) #system .beat-2 { animation-name: sysbeat-2; }
+  .hp:not([data-motion="off"]) .scrub-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .hp:not([data-motion="off"]) .beats { min-height: 13rem; }
+  .hp:not([data-motion="off"]) .beat { position: absolute; inset: 0 0 auto 0; margin: 0; }
+  .hp:not([data-motion="off"]) .art-transcript { animation-name: art-transcript; }
+  .hp:not([data-motion="off"]) .art-notion { animation-name: art-notion; }
+  .hp:not([data-motion="off"]) .art-slack { animation-name: art-slack; }
+  .hp:not([data-motion="off"]) .art-profile { animation-name: art-profile; }
+  .hp:not([data-motion="off"]) .art-signal { animation-name: art-signal; }
+  .hp:not([data-motion="off"]) .beat-0 { animation-name: beat-0; }
+  .hp:not([data-motion="off"]) .beat-1 { animation-name: beat-1; }
+  .hp:not([data-motion="off"]) .beat-2 { animation-name: beat-2; }
+}
+
+/* The closing band drifts slower than the page and gains colour as it arrives. */
+.hp .photo { height: 84vh; min-height: 560px; }
+@keyframes ph-scroll { from { transform: translateY(-7%); filter: grayscale(1); } 55% { filter: grayscale(0); } to { transform: translateY(7%); filter: grayscale(0); } }
+/* A hairline that fills in blue when its block reveals */
+.hp .line-fill { position: absolute; inset: 0; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.hp .reveal.in .line-fill { transform: scaleX(1); }
+
+/* Scrubbing that works everywhere: the page sets --p (0 to 1) from scroll position, and paused CSS
+   animations read it through a negative delay. No scroll-timeline support needed. */
+.hp .scrubbed { animation-duration: 1s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; animation-delay: calc(var(--p, 0) * -1s); }
+@media (prefers-reduced-motion: no-preference) {
+  .hp:not([data-motion="off"]) .ph-img { animation-name: ph-scroll; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp .scrub-track { height: auto; } .hp .scrub-pin { position: static; height: auto; } .hp .beat { position: static; }
+  .hp .beat + .beat { margin-top: 2rem; }
+  .hp .reveal { opacity: 1; transform: none; transition: none; }
+  .hp .bp-line, .hp .bp-node, .hp .bp-label, .hp .bp-pulse, .hp .flow-pulse, .hp .node { animation: none; }
+  .hp .step { opacity: 1; } .hp .step .step-bar { transform: scaleX(1); }
+}
+/* Blueprint lines draw when their block scrolls into view, not on page load; then pulses keep travelling the connectors. */
+.hp.js .bp-line, .hp.js .bp-node, .hp.js .bp-label { animation-play-state: paused; }
+.hp .reveal.in .bp-line, .hp .reveal.in .bp-node, .hp .reveal.in .bp-label { animation-play-state: running; }
+@keyframes bp-pulse { 0% { stroke-dashoffset: 16; opacity: 0; } 8% { opacity: 1; } 55%, 100% { stroke-dashoffset: -150; opacity: 0; } }
+.hp .bp-pulse { stroke-dasharray: 16 400; stroke-dashoffset: 16; opacity: 0; animation: bp-pulse 3.2s cubic-bezier(0.45, 0, 0.2, 1) infinite; animation-play-state: paused; }
+.hp .reveal.in .bp-pulse { animation-play-state: running; }
+
+/* Phones. Smaller type; the case study stays a pinned scene but with the stage first and everything compact enough to fit; the freight case reads text first. */
+@media (max-width: 767px) {
+  .hp h1 { font-size: 30px; } .hp h2 { font-size: 27px; } .hp h3 { font-size: 21px; }
+  .hp [class*="text-[17px]"], .hp [class*="text-[18px]"], .hp [class*="text-[19px]"] { font-size: 16px; }
+  .hp #system .beat h2 { font-size: 24px; }
+  .hp:not([data-motion="off"]) #system .beats { min-height: 22rem; } /* a shorter block: the beats sit a little lower, with air under the orb */
+  .hp #story .scrub-pin > div { padding-top: 4.5rem; padding-bottom: 1rem; gap: 0.75rem; align-content: start; }
+  .hp #story .stage { max-width: none; } /* text first, then the stage, as on the freight case */
+  .hp #story .art-slack { display: none; } /* two source cards are enough on a phone */
+  .hp #story .stage + p { display: none; }
+  .hp #story .art { width: 78%; } .hp #story .art-profile, .hp #story .art-signal { width: 92%; }
+  @keyframes art-transcript { 0%, 24% { opacity: 1; transform: translate(-62%, -112%) rotate(-3deg); } 38%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } }
+  @keyframes art-notion { 0%, 24% { opacity: 1; transform: translate(-38%, 12%) rotate(2deg); } 40%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } }
+  @keyframes art-slack { 0%, 24% { opacity: 1; transform: translate(-62%, 68%) rotate(-2deg); } 42%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } }
+  .hp:not([data-motion="off"]) #system.scrub-track { height: 420vh; }
+  .hp:not([data-motion="off"]) #story.scrub-track { height: 260vh; }
+  .hp .photo { height: 80vh; min-height: 560px; }
+  .hp #story h2 { font-size: 22px; margin-top: 0.35rem; }
+  /* the copy column dissolves into the grid so its pieces can be ordered: text, then the stage, then the delivery note */
+  .hp #story .scrub-pin > div > div:first-child { display: contents; }
+  .hp #story .scrub-pin > div > div:last-child { order: 2; }
+  .hp #story .beats + div { order: 3; margin-top: 0.25rem; }
+  .hp #story .beats { margin-top: 0.75rem; min-height: 12rem; }
+  .hp #story .beat h3 { font-size: 19px; margin-top: 0.3rem; } .hp #story .beat p { font-size: 15px; margin-top: 0.5rem; }
+  .hp #story .beats + div { margin-top: 0.75rem; font-size: 13px; } .hp #story .beats + div p:last-child { display: none; } /* the section is already titled with the client */
+  /* freight case: text, then the diagram at full bleed and a size that reads, then the delivery note */
+  .hp #freight > div { gap: 1rem; }
+  .hp #freight > div > div:last-child { display: contents; }
+  .hp #freight > div > div:first-child { order: 2; margin-top: 0.5rem; padding: 1.25rem; }
+  /* builds tabs become five dots on a phone: the cards carry the names and the count, a swipe or a tap moves between them */
+  .hp.js .phase-nav.phase-nav-row { justify-content: center; gap: 0.35rem; margin-top: 1.25rem; }
+  #builds[data-phase] .phase-nav-row .phase-dot { padding: 0.55rem 0.45rem; border: 0; background: none; color: var(--muted); }
+  .hp.js .phase-nav-row .phase-dot span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .hp.js .phase-nav-row .phase-dot i { display: block; width: 8px; height: 8px; }
+  .hp #freight > div > div:last-child > div { order: 3; margin-top: 0.5rem; }
+  .hp .step { padding-top: 2rem; padding-bottom: 2rem; }
+}
+@media (max-width: 767px) and (max-height: 720px) {
+  /* short phones: everything shrinks a step so the Delivered note still fits under the stage */
+  .hp #story .scrub-pin > div { padding-top: 3.75rem; gap: 0.5rem; }
+  .hp #story h2 { font-size: 20px; } .hp #story .beats { min-height: 11.25rem; } .hp #story .beat p { font-size: 14px; margin-top: 0.35rem; }
+  .hp #story .stage { aspect-ratio: 16 / 9; width: 90%; }
+  .hp #story .beats + div { margin-top: 0.5rem; font-size: 12px; line-height: 1.4; } .hp #story .beats + div p:last-child { display: none; }
+  @keyframes art-transcript { 0%, 24% { opacity: 1; transform: translate(-62%, -104%) rotate(-3deg); } 38%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } }
+  @keyframes art-notion { 0%, 24% { opacity: 1; transform: translate(-38%, 2%) rotate(2deg); } 40%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } }
+}
