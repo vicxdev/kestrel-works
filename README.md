@@ -7,9 +7,16 @@ performance work that makes all of it feel instant.
 Every client, person and figure on these pages is fictional.
 
 ![The homepage opens on a wireframe brain under a sky of points](docs/home-light.jpg)
+![The system digests, in the dark theme](docs/home-system-dark.jpg)
 ![Outputs travel out from the orb along their lanes](docs/home-outputs-light.jpg)
-![The lead page hero: a travelling map behind the copy](docs/harbor-dark.jpg)
 ![A pinned case story scrubbed by scroll](docs/story-light.jpg)
+![A blueprint diagram that draws itself and keeps pulsing](docs/freight-dark.jpg)
+![The lead page hero: a travelling map behind the copy](docs/harbor-dark.jpg)
+
+<p>
+  <img src="docs/home-phone-dark.jpg" width="300" alt="The homepage on a phone, dark theme">
+  <img src="docs/harbor-phone-light.jpg" width="300" alt="The lead page on a phone, light theme">
+</p>
 
 ## What is in it
 
