@@ -18,6 +18,20 @@ Every client, person and figure on these pages is fictional.
   <img src="docs/harbor-phone-light.jpg" width="300" alt="The lead page on a phone, light theme">
 </p>
 
+## In motion
+
+Scroll drives the opening scene: the brain smooths into the orb, the sources connect, the core digests, the outputs travel out.
+
+![Scrolling through the system scene](docs/home-scroll.webp)
+
+The map behind the lead page travels from one founder to the next on its own clock.
+
+![The map journey](docs/map-journey.webp)
+
+The case story is a pinned scene scrubbed by scroll, with the stage moving from scattered sources to a profile to signals.
+
+![The case story, scrubbed](docs/story-scroll.webp)
+
 ## What is in it
 
 - **The system scene** (`src/app/_home/system-scene.tsx`). A wireframe brain drawn with iso-lines of a folded stripe field
