@@ -1,0 +1,6 @@
+{
+  // Cloudflare Pages: `npm run build` writes the static site to out/, and `npx wrangler pages deploy` publishes it.
+  "name": "kestrel-works",
+  "compatibility_date": "2026-09-01",
+  "pages_build_output_dir": "out"
+}

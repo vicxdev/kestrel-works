@@ -1,4 +1,4 @@
-// Screenshots for the README, taken from a running build (npm run build && npx next start -p 3011). Writes docs/*.jpg.
+// Screenshots for the README, taken from the static export served locally (npm run build && npx serve out -l 3011). Writes docs/*.jpg.
 // Needs a Chromium binary: set CHROME if the default is missing.  Usage: node scripts/screenshots.mjs [base url]
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -12,8 +12,8 @@ const SHOTS = [
   { out: "home-outputs-light", path: "/?theme=light", go: at("system", 0.9), wait: 6000 },
   { out: "story-light", path: "/?theme=light", go: at("story", 0.5), wait: 2500 },
   { out: "freight-dark", path: "/?theme=dark", go: 'scrollTo({ top: document.getElementById("freight").offsetTop - 40, behavior: "instant" })', wait: 3500 },
-  { out: "harbor-dark", path: "/harbor?theme=dark", go: "scrollTo(0, 0)", wait: 8000 },
-  { out: "harbor-phone-light", path: "/harbor?theme=light", go: "scrollTo(0, 0)", wait: 7000, w: 390, h: 844, mobile: true },
+  { out: "harbor-dark", path: "/harbor/?theme=dark", go: "scrollTo(0, 0)", wait: 8000 },
+  { out: "harbor-phone-light", path: "/harbor/?theme=light", go: "scrollTo(0, 0)", wait: 7000, w: 390, h: 844, mobile: true },
   { out: "home-phone-dark", path: "/?theme=dark", go: "scrollTo(0, 0)", wait: 6000, w: 390, h: 844, mobile: true },
 ];
 
