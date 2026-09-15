@@ -1,5 +1,7 @@
 # Kestrel Works
 
+**Live: [kestrel-works.pages.dev](https://kestrel-works.pages.dev)**
+
 A marketing site for a fictional operations studio, built to show a design system directed end to end: a scroll-driven
 Three.js scene that opens the homepage, a travelling map behind a lead page, a page guide, light and dark themes, and the
 performance work that makes all of it feel instant.
@@ -47,6 +49,14 @@ The case story is a pinned scene scrubbed by scroll, with the stage moving from 
 - **A page guide** with sub-steps for the pinned scenes, URL hashes, and a section menu on phones.
 - **Pinned case stories** scrubbed by scroll with paused CSS animations, no scroll-timeline support needed.
 - **Light and dark**, following the device until the reader picks.
+
+## Deploy
+
+The site is static. `npm run build` writes it to `out/`, and Cloudflare Pages serves it:
+
+```bash
+npx wrangler pages deploy out --project-name kestrel-works
+```
 
 ## Run it
 
